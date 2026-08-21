@@ -25,6 +25,14 @@
                             Estoque: {{ produto.estoque }}
                         </p>
 
+                        <p class="produto-categoria">
+                            Categoria: {{ produto.categoria }}
+                        </p>
+
+                        <p class="produto-descricao">
+                            Descrição: {{ produto.descricao }}
+                        </p>
+
                         {% if produto.preco > 100 %}
                             <strong class="produto-caro">
                                 Acima de R$ 100,00

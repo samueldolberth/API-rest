@@ -4,8 +4,14 @@
 
     <h2 class="titulo-pagina">Cadastrar Novo Produto</h2>
 
-    {% if erro %}
-        <p class="erro">{{ erro }}</p>
+    {% if erros %}
+        <ul>
+            {% for erro in erros %}
+                <li class="erro">
+                    {{ erro }}
+                </li>
+            {% endfor %}
+        </ul>
     {% endif %}
 
     <form class="form-produto" method="POST">
@@ -18,6 +24,16 @@
 
         <label class="form-label" for="estoque">Estoque:</label>
         <input class="form-input" type="number" id="estoque" name="estoque" min="0" required>
+
+        <label class="form-label" for="categoria">Categoria:</label>
+        <select class="form-input" id="categoria" name="categoria" required>
+            <option value="">Selecione uma categoria</option>
+            <option value="Periféricos">Periféricos</option>
+            <option value="Informática">Informática</option>
+        </select>
+
+        <label class="form-label" for="descricao">Descrição:</label>
+        <textarea class="form-input" id="descricao" name="descricao" rows="4" required></textarea>
 
         <button class="botao-cadastrar" type="submit">
             Cadastrar
