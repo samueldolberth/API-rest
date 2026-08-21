@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+    <h2 class="titulo-pagina">Cadastrar Novo Produto</h2>
+
+    {% if erro %}
+        <p class="erro">{{ erro }}</p>
+    {% endif %}
+
+    <form class="form-produto" method="POST">
+
+        <label class="form-label" for="nome">Nome:</label>
+        <input class="form-input" type="text" id="nome" name="nome" required>
+
+        <label class="form-label" for="preco">Preço:</label>
+        <input class="form-input" type="number" id="preco" name="preco" step="0.01" required>
+
+        <label class="form-label" for="estoque">Estoque:</label>
+        <input class="form-input" type="number" id="estoque" name="estoque" min="0" required>
+
+        <button class="botao-cadastrar" type="submit">
+            Cadastrar
+        </button>
+
+    </form>
+
+{% endblock %}

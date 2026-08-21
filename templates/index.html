@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+    <h2 class="titulo-pagina">Produtos cadastrados</h2>
+
+    {% if produtos %}
+
+        <ul class="lista-produtos">
+
+            {% for produto in produtos %}
+
+                <li class="produto">
+
+                    <div class="produto-info">
+                        <h3 class="produto-nome">
+                            {{ produto.nome }}
+                        </h3>
+
+                        <p class="produto-preco">
+                            R$ {{ "%.2f"|format(produto.preco) }}
+                        </p>
+
+                        <p class="produto-estoque">
+                            Estoque: {{ produto.estoque }}
+                        </p>
+
+                        {% if produto.preco > 100 %}
+                            <strong class="produto-caro">
+                                Acima de R$ 100,00
+                            </strong>
+                        {% endif %}
+                    </div>
+
+                    <form 
+                        class="form-remover"
+                        action="{{ url_for('remover_produto', index=loop.index0) }}" 
+                        method="POST"
+                    >
+                        <button class="botao-remover" type="submit">
+                            Remover
+                        </button>
+                    </form>
+
+                </li>
+
+            {% endfor %}
+
+        </ul>
+
+    {% else %}
+
+        <p class="sem-produtos">
+            Nenhum produto cadastrado ainda.
+        </p>
+
+    {% endif %}
+
+{% endblock %}
