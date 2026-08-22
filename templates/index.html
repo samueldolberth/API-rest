@@ -2,6 +2,16 @@
 
 {% block content %}
 
+    {% if nome_visitante %}
+        <p>Bem-vindo, {{ nome_visitante }}!</p>
+    {% endif %}
+
+    <form method="POST">
+        <label for="nome_visitante">Digite seu nome:</label>
+        <input type="text" id="nome_visitante" name="nome_visitante" value="{{ nome_visitante or '' }}">
+        <button type="submit">Salvar</button>
+    </form>
+
     <h2 class="titulo-pagina">Produtos cadastrados</h2>
 
     {% if produtos %}

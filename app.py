@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, url_for, redirect
+from flask import Flask, make_response, render_template, request, url_for, redirect
 
 app = Flask(__name__)
 
@@ -26,9 +26,18 @@ produtos = [
     }
 ]
 
-@app.route('/')
+@app.route("/", methods=["GET", "POST"])
 def index():
-    return render_template("index.html", titulo="Catálogo de Produtos", produtos=produtos)
+    if request.method == "POST":
+        nome_visitante = request.form.get("nome_visitante", "").strip()
+        resp = make_response(redirect(url_for("index")))
+        resp.set_cookie("nome_visitante", nome_visitante, max_age=60*60*24*30)  # Cookie válido por 30 dias (seg*min*horas*dias)
+        return resp
+
+    nome_visitante = request.cookies.get("visitante")
+    return render_template(
+        "index.html", produtos=produtos, nome_visitante=nome_visitante
+    )
 
 @app.route("/sobre")
 def sobre():
@@ -64,7 +73,7 @@ def novo():
                 erros.append("O estoque deve ser maior que zero.")
         except ValueError:
             erros.append("Estoque inválido.")
-            
+
         if erros:
             return render_template("novo.html", erros=erros)
 
@@ -82,6 +91,27 @@ def remover_produto(index):
     if 0 <= index < len(produtos):
         produtos.pop(index)
     return redirect(url_for("index"))
+
+
+# teste de coockies
+@app.route('/cor', methods=["GET", "POST"])
+def cor():
+    if request.method == "POST":
+        cor_escolhida = request.form.get("cor", "")
+        resp = make_response(redirect(url_for("cor")))
+        resp.set_cookie("cor_favorita", cor_escolhida)
+        return resp
+
+    cor_salva = request.cookies.get(
+        "cor_favorita", "nenhuma cor salva ainda"
+    )
+    return f"""
+    <p>Cor salva atualmente: {cor_salva}</p>
+    <form method="POST">
+        <input type="text" name="cor">
+        <button type="submit">Salvar cor</button>
+    </form>
+"""
 
 if __name__ == '__main__':
     app.run(debug=True)
