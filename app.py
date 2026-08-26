@@ -1,6 +1,8 @@
-from flask import Flask, make_response, render_template, request, url_for, redirect
+from flask import Flask, make_response, render_template, request, url_for, redirect, session
 
 app = Flask(__name__)
+
+app.secret_key = "troque-esta-chave-em-producao"
 
 produtos = [
     {
@@ -34,10 +36,16 @@ def index():
         resp.set_cookie("nome_visitante", nome_visitante, max_age=60*60*24*30)  # Cookie válido por 30 dias (seg*min*horas*dias)
         return resp
 
-    nome_visitante = request.cookies.get("visitante")
+    nome_visitante = request.cookies.get("nome_visitante")
     return render_template(
         "index.html", produtos=produtos, nome_visitante=nome_visitante
     )
+
+@app.route("/esquecer")
+def esquecer():
+    resp = make_response(redirect(url_for("index")))
+    resp.delete_cookie("nome_visitante")
+    return resp
 
 @app.route("/sobre")
 def sobre():
@@ -66,7 +74,7 @@ def novo():
         except ValueError:
             erros.append("Preço inválido.")
 
-        estoque = None
+        estoque = None                                           
         try:
             estoque = int(estoque_texto)
             if estoque <= 0:
@@ -78,6 +86,9 @@ def novo():
             return render_template("novo.html", erros=erros)
 
         produtos.append({"nome": nome, "preco": preco, "estoque": estoque, "categoria": categoria, "descricao": descricao})
+        session["cadastrados_na_sessao"] = (
+            session.get("cadastrados_na_sessao", 0) + 1
+        )
         return redirect(url_for("index"))
     return render_template("novo.html")
 
