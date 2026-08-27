@@ -8,6 +8,10 @@
         <p class="texto-sobre">
             Catálogo de produtos desenvolvido nas aulas de Flask.
         </p>
+
+        <p>
+            Você cadastrou {{ session.get('cadastrados_na_sessao', 0) }} produtos na sessão.
+        </p>
     </section>
 
 {% endblock %}

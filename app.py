@@ -1,4 +1,4 @@
-from flask import Flask, make_response, render_template, request, url_for, redirect, session
+from flask import Flask, make_response, render_template, request, url_for, redirect, session, flash
 
 app = Flask(__name__)
 
@@ -89,6 +89,7 @@ def novo():
         session["cadastrados_na_sessao"] = (
             session.get("cadastrados_na_sessao", 0) + 1
         )
+        flash("Produto cadastrado com sucesso!", "sucesso")
         return redirect(url_for("index"))
     return render_template("novo.html")
 
