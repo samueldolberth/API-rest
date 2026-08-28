@@ -17,32 +17,36 @@ class Produto(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     nome = db.Column(db.String(100), nullable=False)
     preco = db.Column(db.Float, nullable=False)
+    estoque = db.Column(db.Integer, nullable=False)
     categoria = db.Column(db.String(50))
     descricao = db.Column(db.Text)
 
-produtos = [
-    {
-        "nome": "Mouse", 
-        "preco": 49.90, 
-        "estoque": 10,
-        "categoria": "Periféricos",
-        "descricao": "Mouse óptico com fio."
-    },
-    {
-        "nome": "Teclado", 
-        "preco": 89.90, 
-        "estoque": 5,
-        "categoria": "Periféricos",
-        "descricao": "Teclado mecânico com iluminação RGB."
-    },
-    {
-        "nome": "Monitor", 
-        "preco": 599.90, 
-        "estoque": 2,
-        "categoria": "Informática",
-        "descricao": "Monitor LED de 24 polegadas."
-    }
-]
+
+def popular_banco():
+    if Produto.query.count() == 0:
+        db.session.add(Produto(
+            nome = "Mouse", 
+            preco = 49.90, 
+            estoque = 10,
+            categoria = "Periféricos",
+            descricao = "Mouse óptico com fio."
+        ))
+        db.session.add(Produto(
+            nome = "Teclado",
+            preco = 89.90,
+            estoque = 5,
+            categoria = "Periféricos",
+            descricao = "Teclado mecânico com iluminação RGB."
+        ))
+        db.session.add(Produto(
+            nome = "Monitor",
+            preco = 599.90,
+            estoque = 2,
+            categoria = "Informática",
+            descricao = "Monitor LED de 24 polegadas."
+        ))
+        db.session.commit()
+
 
 @app.route("/", methods=["GET", "POST"])
 def index():
@@ -53,8 +57,13 @@ def index():
         return resp
 
     nome_visitante = request.cookies.get("nome_visitante")
+
+    produtos = Produto.query.all()
+
     return render_template(
-        "index.html", produtos=produtos, nome_visitante=nome_visitante
+        "index.html", 
+        produtos=produtos, 
+        nome_visitante=nome_visitante
     )
 
 @app.route("/esquecer")
@@ -101,7 +110,17 @@ def novo():
         if erros:
             return render_template("novo.html", erros=erros)
 
-        produtos.append({"nome": nome, "preco": preco, "estoque": estoque, "categoria": categoria, "descricao": descricao})
+        novo_produto = Produto(
+            nome = nome,
+            preco = preco,
+            estoque = estoque,
+            categoria = categoria,
+            descricao = descricao
+        )
+
+        db.session.add(novo_produto)
+        db.session.commit()
+
         session["cadastrados_na_sessao"] = (
             session.get("cadastrados_na_sessao", 0) + 1
         )
@@ -111,14 +130,23 @@ def novo():
 
 @app.route('/produtos_caros')
 def produtos_caros():
-    produtos_caros = [produto for produto in produtos if produto["preco"] > 100]
+    produtos_caros = Produto.query.filter(Produto.preco > 100).all()
+
     return render_template("index.html", titulo="Produtos Caros", produtos=produtos_caros)
 
-@app.route('/remover_produto/<int:index>', methods=["POST"])
-def remover_produto(index):
-    if 0 <= index < len(produtos):
-        produtos.pop(index)
+@app.route('/remover_produto/<int:id>', methods=["POST"])
+def remover_produto(id):
+    produto = db.get_or_404(Produto, id)
+
+    db.session.delete(produto)
+    db.session.commit()
+
     return redirect(url_for("index"))
+
+@app.route("/produto/<int:produto_id>")
+def detalhe_produto(produto_id):
+    produto = db.get_or_404(Produto, produto_id)
+    return render_template("detalhe.html", produto=produto)
 
 
 # teste de coockies
@@ -141,17 +169,9 @@ def cor():
     </form>
 """
 
-with app.app_context():
-    db.create_all()
-
-    nova = Tarefa(titulo="Estudar Flask")
-    db.session.add(nova)
-    db.session.commit()
-
-    todas = Tarefa.query.all()
-    for tarefa in todas:
-        print(tarefa.id, tarefa.titulo)
-
 if __name__ == '__main__':
+    with app.app_context():
+        db.create_all()
+        popular_banco()
     app.run(debug=True)
 

@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+{% block content %}
+ <h2>{{ produto.nome }}</h2>
+ <p>Categoria: {{ produto.categoria }}</p>
+ <p>Preço: R$ {{ "%.2f"|format(produto.preco) }}</p>
+ <p>Estoque: {{ produto.estoque }}</p>
+ <p>{{ produto.descricao }}</p>
+{% endblock %}
