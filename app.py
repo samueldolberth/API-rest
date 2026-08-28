@@ -141,6 +141,8 @@ def remover_produto(id):
     db.session.delete(produto)
     db.session.commit()
 
+    flash("Produto removido.", "sucesso")
+
     return redirect(url_for("index"))
 
 @app.route("/produto/<int:produto_id>")

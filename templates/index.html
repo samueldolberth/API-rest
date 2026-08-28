@@ -56,14 +56,10 @@
 
                     <a href="{{ url_for('editar_produto', produto_id=produto.id) }}">Editar</a>
 
-                    <form 
+                    <form method="POST"
                         class="form-remover"
-                        action="{{ url_for('remover_produto', id=produto.id) }}" 
-                        method="POST"
-                    >
-                        <button class="botao-remover" type="submit">
-                            Remover
-                        </button>
+                        action="{{ url_for('remover_produto', id=produto.id) }}">
+                        <button class="botao-remover" type="submit">Remover</button>
                     </form>
 
                 </li>
