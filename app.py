@@ -1,8 +1,17 @@
 from flask import Flask, make_response, render_template, request, url_for, redirect, session, flash
+from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
+app.config["SQLALCHEMY_DATABASE_URI"] = (
+    "mysql+pymysql://root:root@localhost/catalogo_produtos"
+)
+db = SQLAlchemy(app)
 
 app.secret_key = "troque-esta-chave-em-producao"
+
+class Tarefa(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    titulo = db.Column(db.String(100))
 
 produtos = [
     {
@@ -127,3 +136,10 @@ def cor():
 
 if __name__ == '__main__':
     app.run(debug=True)
+
+with app.app_context():
+    db.create_all()
+
+    nova = Tarefa(titulo="Estudar Flask")
+    db.session.add(nova)
+    db.session.commit()
