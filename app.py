@@ -3,7 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = (
-    "mysql+pymysql://root:root@localhost/catalogo_produtos"
+    "mysql+pymysql://root:@localhost:3306/catalogo_produtos"
 )
 db = SQLAlchemy(app)
 
@@ -12,6 +12,13 @@ app.secret_key = "troque-esta-chave-em-producao"
 class Tarefa(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     titulo = db.Column(db.String(100))
+
+class Produto(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    nome = db.Column(db.String(100), nullable=False)
+    preco = db.Column(db.Float, nullable=False)
+    categoria = db.Column(db.String(50))
+    descricao = db.Column(db.Text)
 
 produtos = [
     {
@@ -134,12 +141,17 @@ def cor():
     </form>
 """
 
-if __name__ == '__main__':
-    app.run(debug=True)
-
 with app.app_context():
     db.create_all()
 
     nova = Tarefa(titulo="Estudar Flask")
     db.session.add(nova)
     db.session.commit()
+
+    todas = Tarefa.query.all()
+    for tarefa in todas:
+        print(tarefa.id, tarefa.titulo)
+
+if __name__ == '__main__':
+    app.run(debug=True)
+
