@@ -5,4 +5,5 @@
  <p>Preço: R$ {{ "%.2f"|format(produto.preco) }}</p>
  <p>Estoque: {{ produto.estoque }}</p>
  <p>{{ produto.descricao }}</p>
+ <a href="{{ url_for('index') }}">Voltar</a>
 {% endblock %}

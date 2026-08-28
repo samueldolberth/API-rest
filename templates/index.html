@@ -54,6 +54,8 @@
                         {% endif %}
                     </div>
 
+                    <a href="{{ url_for('editar_produto', produto_id=produto.id) }}">Editar</a>
+
                     <form 
                         class="form-remover"
                         action="{{ url_for('remover_produto', id=produto.id) }}" 

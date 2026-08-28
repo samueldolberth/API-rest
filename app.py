@@ -148,6 +148,19 @@ def detalhe_produto(produto_id):
     produto = db.get_or_404(Produto, produto_id)
     return render_template("detalhe.html", produto=produto)
 
+@app.route("/produto/<int:produto_id>/editar", methods=["GET", "POST"])
+def editar_produto(produto_id):
+    produto = db.get_or_404(Produto, produto_id)
+    if request.method == "POST":
+        produto.nome = request.form.get("nome", "").strip()
+        produto.preco = float(request.form.get("preco", ""))
+        produto.estoque = int(request.form.get("estoque", ""))
+        produto.descricao = request.form.get("descricao", "").strip()
+        db.session.commit()
+        flash("Produto atualizado com sucesso!", "sucesso")
+        return redirect(url_for("index"))
+    return render_template("editar.html", produto=produto)
+
 
 # teste de coockies
 @app.route('/cor', methods=["GET", "POST"])
